@@ -47,10 +47,30 @@ plt.rcParams['legend.fontsize'] = FONT_SIZE_LEGEND
 ## Axis Settings
 
 ### X-axis Text Labels
-When x-axis tick labels are text (not numbers), rotate them for better readability:
+When x-axis tick labels are text (not numbers), rotate them for better readability.
+
+**Centering Rotated Labels**: A common problem is that rotated labels appear misaligned with their corresponding tick positions. This happens because matplotlib's default `ha='right'` aligns the text by its endpoint, not its visual center.
+
+**Wrong approach** (labels shift away from tick center):
 ```python
-plt.xticks(rotation=45, ha='right')  # or rotation=30 depending on label length
+ax.set_xticklabels(labels, rotation=45, ha='right')  # Labels not centered!
 ```
+
+**Correct approach** (labels centered at tick positions):
+```python
+ax.set_xticklabels(labels, rotation=45, ha='center', rotation_mode='anchor')
+ax.tick_params(axis='x', pad=10)  # Add padding to avoid overlap with plot area
+```
+
+**Explanation**:
+- `ha='center'`: Aligns the text horizontally by its center point
+- `rotation_mode='anchor'`: Rotates around the alignment anchor point, keeping the center aligned with the tick
+- `tick_params(pad=...)`: Moves labels down to prevent rotated text from overlapping with bars/data
+
+**Recommended padding values**:
+- `rotation=30`: `pad=10`
+- `rotation=45`: `pad=15` to `pad=20`
+- Long labels or wide bar groups: increase `pad` as needed
 
 ## Scatter Plot Style
 
@@ -344,7 +364,8 @@ for i, (data, style) in enumerate(zip(series_list, series_styles)):
 ax.set_xlabel('Categories')
 ax.set_ylabel('Performance Metric')
 ax.set_xticks(x)
-ax.set_xticklabels(labels, rotation=30, ha='right')
+ax.set_xticklabels(labels, rotation=30, ha='center', rotation_mode='anchor')
+ax.tick_params(axis='x', pad=10)  # Avoid overlap with bars
 
 # Legend
 ax.legend(loc='best', frameon=True, ncol=2)
@@ -459,7 +480,7 @@ Combine white/gray with hatch patterns for up to 8 distinct series:
 - [ ] No title added to figure
 - [ ] Correct figure size (single-column or two-column)
 - [ ] Font sizes: axis labels (14), ticks/legend (11)
-- [ ] Text x-axis labels rotated if necessary
+- [ ] Rotated text labels use `ha='center', rotation_mode='anchor'` with `tick_params(pad=...)`
 - [ ] Bar plots have black edge color
 - [ ] Correct color scheme:
   - Red-blue for 2 series comparison

@@ -84,7 +84,9 @@ for i, (data, color, hatch, label) in enumerate(zip(series_list, colors, hatches
 ax.set_xlabel('Methods')
 ax.set_ylabel('Performance Score')
 ax.set_xticks(x)
-ax.set_xticklabels(labels, rotation=30, ha='right')
+# Rotated labels: use ha='center' + rotation_mode='anchor' for proper centering
+ax.set_xticklabels(labels, rotation=30, ha='center', rotation_mode='anchor')
+ax.tick_params(axis='x', pad=10)  # Add padding to avoid overlap with bars
 ax.legend(loc='best', frameon=True, ncol=2)
 
 plt.tight_layout()
